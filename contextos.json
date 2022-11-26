@@ -497,7 +497,7 @@
         "tarde",	
         "noche",	
         "buenas noches",	
-        "adios"
+        "adios",
         "chau",
         "es gracioso",	
         "yo también",	
@@ -519,7 +519,7 @@
         "otro",	
         "yo",	
         "vos",	
-        "abuelos"	
+        "abuelos",	
         "ellos",	
         "hermana",	
         "hermano",	
@@ -672,7 +672,7 @@
         "ayer",	
         "hoy",	
         "pronto",	
-        _"despúes",	
+        "después",	
         "día",	
         "mes",	
         "año",	
