@@ -1,10 +1,14 @@
-<p align="center"; font-size=2em; font-weight="bold">pictoPredictor</p>
+<h1 align="center"><strong>pictoPredictor</strong></h1>
+
 <p align="center"> Using Transformers to enhance human communication. </p>
+
+<div align="center">
 
 ![](https://img.shields.io/badge/huggingface-transformers-blue)
 ![](https://img.shields.io/badge/python-3.10-blue)
 ![](https://img.shields.io/badge/Made%20with-Love-red)
 
+</div>
 
 
 <!-- ![](./images/readme_image.png) -->
@@ -19,14 +23,13 @@
 
 ## Table of Contents
 
-- [pictoPredictor](#pictopredictor)
-  - [Table of Contents](#table-of-contents)
-  - [Description](#description)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Folder structure](#folder-structure)
-  - [Contributing](#contributing)
-  - [License](#license)
+- [Table of Contents](#table-of-contents)
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Folder structure](#folder-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Description
 This project provides a pictogram predictor for Augmentative and Alternative Communication (AAC) systems.
