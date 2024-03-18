@@ -1,19 +1,16 @@
-# <div style="text-align:center; font-size: 2em; font-weight: bold">pictoPredictor</div>
-<div style="text-align:center;"> Using Transformers to enhance human communication. 
-</div>
+<p align="center"; font-size=2em; font-weight="bold">pictoPredictor</p>
+<p align="center"> Using Transformers to enhance human communication. </p>
 
-<div style="text-align:center">
 ![](https://img.shields.io/badge/huggingface-transformers-blue)
 ![](https://img.shields.io/badge/python-3.10-blue)
 ![](https://img.shields.io/badge/Made%20with-Love-red)
-</div>
 
 
 
 <!-- ![](./images/readme_image.png) -->
-<div style="text-align:center;">
+<p align="center">
 <img src="./images/readme_image.png" alt="readme_image" style="width:300px;height:300px;" />
-</div>
+</p>
 
 
 
