@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -46,44 +80,98 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="pictopredictor" class="level1">
-<h1>pictoPredictor</h1>
+#
+<div style="text-align:center; font-size: 2em; font-weight: bold">
+pictoPredictor
+</div>
+<div style="text-align:center;">
 <p>Using Transformers to enhance human communication.</p>
-<p><img src="./images/readme_image.png" class="img-fluid"></p>
-<p>The <code>src</code> folder contains up to date and clean code. Use this for your own projects. The <code>nbs</code> folder may contain outdated code and is not clean. It may not run out of the box and might not be the easiest thing to understand. However, they may contain useful information for some people (mainly if you haven’t done any NLP before), so inspect them if you need. Note: Some of those nbs where used in Google Colab, so they might not run locally without some mods.</p>
-</section>
-<section id="project-title" class="level1">
-<h1>Project Title</h1>
-<p>One Paragraph of project description goes here</p>
+</div>
+<div style="text-align:center">
+<p><img src="https://img.shields.io/badge/huggingface-transformers-blue.png" class="img-fluid"> <img src="https://img.shields.io/badge/python-3.10-blue" class="img-fluid"> <img src="https://img.shields.io/badge/Made%20with-Love-red.png" class="img-fluid"></p>
+</div>
+<!-- ![](./images/readme_image.png) -->
+<div style="text-align:center;">
+<p><img src="./images/readme_image.png" alt="readme_image" style="width:300px;height:300px;"></p>
+</div>
 <section id="table-of-contents" class="level2">
 <h2 class="anchored" data-anchor-id="table-of-contents">Table of Contents</h2>
 <ul>
-<li><a href="#pictopredictor">pictoPredictor</a></li>
-<li><a href="#project-title">Project Title</a>
+<li><a href="#pictopredictor">pictoPredictor</a>
 <ul>
 <li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#description">Description</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
+<li><a href="#folder-structure">Folder structure</a></li>
 <li><a href="#contributing">Contributing</a></li>
 <li><a href="#license">License</a></li>
 </ul></li>
 </ul>
 </section>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>This project provides a pictogram predictor for Augmentative and Alternative Communication (AAC) systems. There’s some work that has done this (e.g., <a href="https://www.sciencedirect.com/science/article/abs/pii/S095741742200611X">PictoBERT: Transformers for next pictogram prediction</a>), but this paper’s approach requires to train a BERT model from scratch, changing BERT’s input embeddings to allow word-sense usage instead of words (i.e., Masked Word-Sense Language Modeling) and using an annotated corpus for training.</p>
+<p>The downsides of this (great) paper ([code available here] (https://github.com/jayralencar/pictoBERT)) are:</p>
+<ol type="1">
+<li>This work is for English pictogram prediction –&gt; We are looking for a Spanish solution.<br>
+</li>
+<li>Requires an annotated corpus.</li>
+<li>Requires full training of a BERT model.</li>
+<li>The model doesn’t distinguish between different pictogram vocabularies for AAC (patients may have different pictogram vocabularies -set of possible pictograms that can be used- depending on the state of their cognitive abilities)</li>
+</ol>
+<p>The approach taken in this project is, with the hopes of being more pragmatic and more easily deployed, the following:</p>
+<p><strong>Base MVP</strong></p>
+<ol type="1">
+<li>Grab an already fast <a href="https://arxiv.org/abs/1810.04805">BERT</a> model that works in spanish. That is, a <a href="https://arxiv.org/abs/1910.01108">DistilBERT</a> that is already finetuned using a spanish corpus. e.g., <a href="https://huggingface.co/dccuchile/distilbert-base-spanish-uncased">dccuchile/distilbert-base-spanish-uncased</a></li>
+<li>Build a pictogram prediction “filter”. Given a pictogram vocabulary, remove from the prediction those pictograms that do NOT appear in the vocabulary.</li>
+<li>Build Gradio App and deploy.</li>
+</ol>
+<p><strong>Improvements over MVP</strong></p>
+<ol type="1">
+<li><p>Improve model predictions. This is achieved by finetuning on a dataset that effectively shifts the probability mass of each possible pictogram towards pictograms that are likely to be used by a patient.</p>
+<ul>
+<li>A dataset that achieves this shifting means a dataset of patient conversations, and to the best of my knowledge, this dataset does not exist. Thus, we have to generate a synthetic dataset: To do this, we prompt a Llama2 model to generate 10 sentences given each possible pictogram in a given patient’s vocabulary (see <code>src/generate_synthetic_dataset.py</code>) and then finetune the model on this dataset (see <code>src/finetune_model.py</code>)</li>
+</ul></li>
+<li><p>Improve the model/program speed and memory requirements by:</p>
+<ul>
+<li><p>Prepare the model to run on edge with <a href="https://www.tensorflow.org/lite">Tensorflow Lite</a></p></li>
+<li><p>Write the whole pictogram predictor app in C++</p></li>
+</ul></li>
+</ol>
+<p><strong>Downsides of this approach</strong></p>
+<ol type="1">
+<li>Missing pictograms in the prediction:
+<ul>
+<li><p>With this approach, we cannot predict multi-word pictograms (e.g., ‘buen provecho’ or ‘es gracioso’, see <code>data/lista-pictogramas</code>). Thus, some pictograms (the multi-word ones) are never going to appear in the predictions.</p></li>
+<li><p>Some spanish pictograms are not contained in DistilBERT’s vocabulary. Thus those pictograms also won’t appear in the predictions.</p></li>
+</ul></li>
+</ol>
+</section>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
 <ol type="1">
-<li>Describe the installation process</li>
+<li>Clone the repository:</li>
 </ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/tatakof/pictoPredictor.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> pictoPredictor</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> create <span class="at">--name</span> myenv</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate myenv</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-r</span> requirements.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<ol type="1">
-<li>Write usage instructions</li>
-</ol>
+<p>To run the whole pipeline (clean data, train, launch app):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> main.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To launch the Gradio app</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> app.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="folder-structure" class="level2">
+<h2 class="anchored" data-anchor-id="folder-structure">Folder structure</h2>
+<p>The <code>src</code> folder contains up to date and clean code. Use this for your own projects. The <code>nbs</code> folder may contain outdated code and is not clean. It may not run out of the box and might not be the easiest thing to understand. However, they may contain useful information for some people (mainly if you haven’t done any NLP before), so inspect them if you need. Note: Some of those nbs where used in Google Colab, so they might not run locally without some mods.</p>
 </section>
 <section id="contributing" class="level2">
 <h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
-<p>CHECK THE AGILE-STYLE TASKS in githubs … (that notion/jira like github thing)</p>
 <ol type="1">
 <li>Fork it!</li>
 <li>Create your feature branch: <code>git checkout -b my-new-feature</code></li>
@@ -95,7 +183,6 @@ ul.task-list li input[type="checkbox"] {
 <section id="license" class="level2">
 <h2 class="anchored" data-anchor-id="license">License</h2>
 <p>Apache 2.0</p>
-</section>
 </section>
 
 </main>
